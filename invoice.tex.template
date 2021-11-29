@@ -1,0 +1,99 @@
+\documentclass{article}
+\pagenumbering{gobble}
+\begin{document}
+{\centering \huge \textbf{Invoice \textnumero{{invoice_number}}}\par}
+
+\bigbreak
+
+\begin{figure}[h!]
+\begin{minipage}{.5\textwidth}
+    {\large \textbf{Contractor}}
+
+    \hrulefill
+
+    \textbf{{{contractor_name}}}
+
+    {{contractor_address1}}
+
+    {{contractor_address2}}
+
+    {{contractor_address3}}
+
+    \bigbreak
+
+    \begin{tabular}{lr}
+
+    ID: & \textbf{{{id}}} \\
+
+    Tax ID: & \textbf{{{tax_id}}} \\
+
+    \\
+
+    Bank name: & {{bank_name}} \\
+
+    IBAN: & {{iban}} \\
+
+    BIC/SWIFT & {{bic}} \\
+
+    Bank address: & {{bank_address_line1}} \\
+
+    & {{bank_address_line2}} \\
+
+    \end{tabular}
+
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+    {\large \textbf{Client}}
+
+    \hrulefill
+
+    \textbf{{{client_name}}}
+
+    {{client_address1}}
+
+    {{client_address2}}
+
+    {{client_address3}}
+
+    \bigbreak
+
+    \begin{tabular}{lr}
+    \\
+    \\
+    \\
+    \\
+    \\
+    \\
+    \\
+    \\
+    \end{tabular}
+
+\end{minipage}
+\end{figure}
+
+\bigbreak
+\bigbreak
+\bigbreak
+
+\begin{figure}[h!]
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Description}\rule{150pt}{0pt} & \textbf{Hours} & \textbf{Rate} & \textbf{Amount}\\
+\hline
+{{service}} & {{hours}} & \${{rate}} & \${{amount}} \\
+\hline
+\end{tabular}
+\end{figure}
+
+\bigbreak
+
+\textbf{Total amount: \rule{200pt}{0pt} \${{amount}}}
+
+\bigbreak
+\bigbreak
+
+Issue date: {{today}}
+
+Due date: {{due}}
+
+\end{document}

@@ -1,0 +1,18 @@
+{
+    "contractor_name": "Grima Wormtongue",
+    "contractor_address1": "12 Eorl's St",
+    "contractor_address2": "Edoras, Riddermark",
+    "contractor_address3": "Middle-earth",
+    "client_name": "Saruman the White",
+    "client_address1": "1 Orthank Ave",
+    "client_address2": "Isengard",
+    "client_address3": "Middle-earth",
+    "id": "1234",
+    "tax_id": "4321",
+    "bank_name": "Lonely Mountain Bank",
+    "iban": "LM1234567890",
+    "bic": "SMUGSUX",
+    "bank_address_line1": "1, Bank Ave",
+    "bank_address_line2": "Erebor, Middle-earth",
+    "service": "Treason"
+}
