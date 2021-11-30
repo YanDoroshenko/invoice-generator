@@ -1,28 +1,18 @@
 #!/bin/bash
 
-
-contractor_name=$(jq -r '.contractor_name' config.json)
-contractor_address1=$(jq -r '.contractor_address1' config.json)
-contractor_address2=$(jq -r '.contractor_address2' config.json)
-contractor_address3=$(jq -r '.contractor_address3' config.json)
-
-client_name=$(jq -r '.client_name' config.json)
-client_address1=$(jq -r '.client_address1' config.json)
-client_address2=$(jq -r '.client_address2' config.json)
-client_address3=$(jq -r '.client_address3' config.json)
-
-
-id=$(jq -r '.id' config.json)
-tax_id=$(jq -r '.tax_id' config.json)
-bank_name=$(jq -r '.bank_name' config.json)
-iban=$(jq -r '.iban' config.json)
-bic=$(jq -r '.bic' config.json)
-bank_address_line1=$(jq -r '.bank_address_line1' config.json)
-bank_address_line2=$(jq -r '.bank_address_line2' config.json)
-service=$(jq -r '.service' config.json)
-
-
+config_file="config.json"
+number_regex='^[0-9]+(\.[0-9]+)?$'
 date_format="+%d.%m.%Y"
+
+hours=$1
+rate=$2
+
+if [[ ! $hours =~ $number_regex ]] || [[ ! $rate =~ $number_regex ]]; then
+    echo "Usage: gen_invoice.sh HOURS RATE [DATE]"
+    echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
+    exit 1
+fi
+
 
 if [ -z $3 ]; then
     date=$(date "+%Y-%m-%d")
@@ -30,30 +20,40 @@ else
     date=$(date -d "$3" "+%Y-%m-%d")
 fi
 
-echo $3
-echo $date
-
-issue_date=$(date -d "$date" $date_format)
-due_date=$(date -d "$date +30 days" $date_format)
-
-echo $issue_date
-echo $due_date
-
-invoice_number=$(date -d $date '+%Y%m01')
-
-echo $invoice_number
-
-number_regex='^[0-9]+(\.[0-9]+)?$'
-
-hours=$1
-rate=$2
-
-if [[ ! $hours =~ $number_regex ]] || [[ ! $rate =~ $number_regex ]]; then
+if [ -z $date ]; then
     echo "Usage: gen_invoice.sh HOURS RATE [DATE]"
+    echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
     exit 1
 fi
 
 amount=$(bc <<< "scale=2;$hours * $rate")
+
+issue_date=$(date -d "$date" $date_format)
+due_days=$(jq -r '.due_days' $config_file)
+due_date=$(date -d "$date +$due_days days" $date_format)
+
+contractor_name=$(jq -r '.contractor_name' $config_file)
+contractor_address1=$(jq -r '.contractor_address1' $config_file)
+contractor_address2=$(jq -r '.contractor_address2' $config_file)
+contractor_address3=$(jq -r '.contractor_address3' $config_file)
+
+client_name=$(jq -r '.client_name' $config_file)
+client_address1=$(jq -r '.client_address1' $config_file)
+client_address2=$(jq -r '.client_address2' $config_file)
+client_address3=$(jq -r '.client_address3' $config_file)
+
+
+id=$(jq -r '.id' $config_file)
+tax_id=$(jq -r '.tax_id' $config_file)
+bank_name=$(jq -r '.bank_name' $config_file)
+iban=$(jq -r '.iban' $config_file)
+bic=$(jq -r '.bic' $config_file)
+bank_address_line1=$(jq -r '.bank_address_line1' $config_file)
+bank_address_line2=$(jq -r '.bank_address_line2' $config_file)
+service=$(jq -r '.service' $config_file)
+
+
+invoice_number=$(date -d $date '+%Y%m01')
 
 sed "s/{{invoice_number}}/$invoice_number/" invoice.tex.template |
     sed "s/{{contractor_name}}/$contractor_name/" |
