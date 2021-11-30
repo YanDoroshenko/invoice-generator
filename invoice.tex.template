@@ -92,8 +92,8 @@
 \bigbreak
 \bigbreak
 
-Issue date: {{today}}
+Issue date: {{issue_date}}
 
-Due date: {{due}}
+Due date: {{due_date}}
 
 \end{document}
