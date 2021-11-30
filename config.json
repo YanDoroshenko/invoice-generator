@@ -15,5 +15,6 @@
     "bank_address_line1": "1, Bank Ave",
     "bank_address_line2": "Erebor, Middle-earth",
     "service": "Treason",
-    "due_days": 40
+    "due_days": 40,
+    "output_dir": "."
 }

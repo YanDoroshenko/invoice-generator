@@ -4,6 +4,16 @@ config_file="config.json"
 number_regex='^[0-9]+(\.[0-9]+)?$'
 date_format="+%d.%m.%Y"
 
+output_dir_str=$(jq -r '.output_dir' $config_file | grep -v "null")
+if [ -z $output_dir_str ]; then
+    output_dir="."
+elif [ -d $output_dir_str ]; then
+    output_dir=$output_dir_str
+else
+    echo "$output_dir_str, specified as output directory is not a directory"
+    exit 1
+fi
+
 hours=$1
 rate=$2
 
@@ -12,7 +22,6 @@ if [[ ! $hours =~ $number_regex ]] || [[ ! $rate =~ $number_regex ]]; then
     echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
     exit 1
 fi
-
 
 if [ -z $3 ]; then
     date=$(date "+%Y-%m-%d")
@@ -25,6 +34,7 @@ if [ -z $date ]; then
     echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
     exit 1
 fi
+
 
 amount=$(bc <<< "scale=2;$hours * $rate")
 
@@ -53,7 +63,7 @@ bank_address_line2=$(jq -r '.bank_address_line2' $config_file)
 service=$(jq -r '.service' $config_file)
 
 
-invoice_number=$(date -d $date '+%Y%m01')
+invoice_number=$(date -d "$date -1 month" '+%Y%m01')
 
 sed "s/{{invoice_number}}/$invoice_number/" invoice.tex.template |
     sed "s/{{contractor_name}}/$contractor_name/" |
@@ -77,7 +87,12 @@ sed "s/{{invoice_number}}/$invoice_number/" invoice.tex.template |
     sed "s/{{amount}}/$amount/" |
     sed "s/{{issue_date}}/$issue_date/" |
     sed "s/{{due_date}}/$due_date/" > "$invoice_number.tex"
-pdflatex "$invoice_number.tex"
+
+echo "Generating invoice to $output_dir"
+pdflatex "$invoice_number.tex" 1>/dev/null
+mv "$invoice_number.pdf" "$output_dir"
+
 rm "$invoice_number.aux"
 rm "$invoice_number.tex"
 rm "$invoice_number.log"
+
