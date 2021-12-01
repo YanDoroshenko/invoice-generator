@@ -58,8 +58,8 @@ tax_id=$(jq -r '.tax_id' $config_file)
 bank_name=$(jq -r '.bank_name' $config_file)
 iban=$(jq -r '.iban' $config_file)
 bic=$(jq -r '.bic' $config_file)
-bank_address_line1=$(jq -r '.bank_address_line1' $config_file)
-bank_address_line2=$(jq -r '.bank_address_line2' $config_file)
+bank_address1=$(jq -r '.bank_address1' $config_file)
+bank_address2=$(jq -r '.bank_address2' $config_file)
 service=$(jq -r '.service' $config_file)
 
 
