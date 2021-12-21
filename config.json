@@ -16,5 +16,7 @@
     "bank_address2": "Erebor, Middle-earth",
     "service": "Treason",
     "due_days": 40,
+    "quantity_label": "Hours",
+    "price_label": "Rate",
     "output_dir": "."
 }

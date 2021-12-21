@@ -14,11 +14,11 @@ else
     exit 1
 fi
 
-hours=$1
-rate=$2
+quantity=$1
+price=$2
 
-if [[ ! $hours =~ $number_regex ]] || [[ ! $rate =~ $number_regex ]]; then
-    echo "Usage: gen_invoice.sh HOURS RATE [DATE]"
+if [[ ! $quantity =~ $number_regex ]] || [[ ! $price =~ $number_regex ]]; then
+    echo "Usage: gen_invoice.sh QUANTITY PRICE [DATE]"
     echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
     exit 1
 fi
@@ -30,13 +30,13 @@ else
 fi
 
 if [ -z $date ]; then
-    echo "Usage: gen_invoice.sh HOURS RATE [DATE]"
+    echo "Usage: gen_invoice.sh QUANTITY PRICE [DATE]"
     echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
     exit 1
 fi
 
 
-amount=$(bc <<< "scale=2;$hours * $rate")
+amount=$(bc <<< "scale=2;$quantity * $price")
 
 issue_date=$(date -d "$date" $date_format)
 due_days=$(jq -r '.due_days' $config_file)
@@ -60,6 +60,9 @@ iban=$(jq -r '.iban' $config_file)
 bic=$(jq -r '.bic' $config_file)
 bank_address1=$(jq -r '.bank_address1' $config_file)
 bank_address2=$(jq -r '.bank_address2' $config_file)
+
+quantity_label=$(jq -r '.quantity_label' $config_file)
+price_label=$(jq -r '.price_label' $config_file)
 service=$(jq -r '.service' $config_file)
 
 
@@ -81,16 +84,18 @@ sed "s/{{invoice_number}}/$invoice_number/" invoice.tex.template |
     sed "s/{{bic}}/$bic/" |
     sed "s/{{bank_address_line1}}/$bank_address_line1/" |
     sed "s/{{bank_address_line2}}/$bank_address_line2/" |
+    sed "s/{{quantity_label}}/$quantity_label/" |
+    sed "s/{{price_label}}/$price_label/" |
     sed "s/{{service}}/$service/" |
-    sed "s/{{hours}}/$hours/" |
-    sed "s/{{rate}}/$rate/" |
+    sed "s/{{quantity}}/$quantity/" |
+    sed "s/{{price}}/$price/" |
     sed "s/{{amount}}/$amount/" |
     sed "s/{{issue_date}}/$issue_date/" |
     sed "s/{{due_date}}/$due_date/" > "$invoice_number.tex"
 
-echo "Generating invoice to $output_dir"
+echo "Generating invoice #$invoice_number to $output_dir"
 pdflatex "$invoice_number.tex" 1>/dev/null
-mv "$invoice_number.pdf" "$output_dir"
+mv "$invoice_number.pdf" "$output_dir" 2>/dev/null
 
 rm "$invoice_number.aux"
 rm "$invoice_number.tex"

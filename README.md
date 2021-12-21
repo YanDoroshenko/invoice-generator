@@ -8,7 +8,7 @@ A little Bash tool that generates invoices.
  - pdflatex
 
 ## Usage
-To generate an invoice run `./gen_invoice.sh HOURS RATE [DATE]` where HOURS and RATE are decimal numbers. DATE is optional and allows you to specify an issue date. DATE must be in a YYYY/mm/dd format (1976/07/04). If DATE is not specified, current date is used. Invoice number is generated as `YYYYmm01`, where `YYYY` is the year and `mm` is the month of a month, previous to the issue date.
+To generate an invoice run `./gen_invoice.sh QUANTITY PRICE [DATE]` where QUANTITY and PRICE are decimal numbers. DATE is optional and allows you to specify an issue date. DATE must be in a YYYY/mm/dd format (1976/07/04). If DATE is not specified, current date is used. Invoice number is generated as `YYYYmm01`, where `YYYY` is the year and `mm` is the month of a month, previous to the issue date.
 
 ## Configuration
 Configuration is done through `config.json` file.
@@ -36,6 +36,8 @@ Values of this configuration options are rendered directly on the resulting invo
 | bic | BIC/SWIFT code of the bank, displeyed under the IBAN |
 | bank\_address1 | First line of bank address, displayed under BIC/SWIFT |
 | bank\_address2 | Second line of bank address, displayed under the first one |
+| quantity\_label | Name of the quantity column (e.g. "Hours") |
+| price\_label | Name of the price column (e.g. "Hourly Rate") |
 | service | Description of service provided, shown in the leftmost column of the table below |
 
 #### Other options

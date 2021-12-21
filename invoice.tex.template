@@ -78,9 +78,9 @@
 \begin{figure}[h!]
 \begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Description}\rule{150pt}{0pt} & \textbf{Hours} & \textbf{Rate} & \textbf{Amount}\\
+\textbf{Description}\rule{150pt}{0pt} & \textbf{{{quantity_label}}} & \textbf{{{price_label}}} & \textbf{Amount}\\
 \hline
-{{service}} & {{hours}} & \${{rate}} & \${{amount}} \\
+{{service}} & {{quantity}} & \${{price}} & \${{amount}} \\
 \hline
 \end{tabular}
 \end{figure}
