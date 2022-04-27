@@ -1,5 +1,6 @@
 \documentclass{article}
 \pagenumbering{gobble}
+\usepackage{graphicx}
 \begin{document}
 {\centering \huge \textbf{Invoice \textnumero{{invoice_number}}}\par}
 
@@ -92,8 +93,14 @@
 \bigbreak
 \bigbreak
 
-Issue date: {{issue_date}}
+Payment according hereto shall be also the confirmation that Parties have
+no claims to each other and have no intention to submit any claims.
 
-Due date: {{due_date}}
+\bigbreak
+\bigbreak
+
+Issue date: {{issue_date}} \hfill {{signature_image}}
+
+Due date: {{due_date}} \hfill {{signature_text}}
 
 \end{document}

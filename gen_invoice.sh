@@ -58,13 +58,17 @@ tax_id=$(jq -r '.tax_id' $config_file)
 bank_name=$(jq -r '.bank_name' $config_file)
 iban=$(jq -r '.iban' $config_file)
 bic=$(jq -r '.bic' $config_file)
-bank_address1=$(jq -r '.bank_address1' $config_file)
-bank_address2=$(jq -r '.bank_address2' $config_file)
+bank_address_line1=$(jq -r '.bank_address1' $config_file)
+bank_address_line2=$(jq -r '.bank_address2' $config_file)
 
 quantity_label=$(jq -r '.quantity_label' $config_file)
 price_label=$(jq -r '.price_label' $config_file)
 service=$(jq -r '.service' $config_file)
 
+if [ -f "signature.png" ]; then
+    signature_image="\\\\includegraphics[height=40pt]{signature.png}"
+    signature_text="\\\\textbf{Contractor:} $contractor_name"
+fi
 
 invoice_number=$(date -d "$date -1 month" '+%Y%m01')
 
@@ -91,13 +95,15 @@ sed "s/{{invoice_number}}/$invoice_number/" invoice.tex.template |
     sed "s/{{price}}/$price/" |
     sed "s/{{amount}}/$amount/" |
     sed "s/{{issue_date}}/$issue_date/" |
-    sed "s/{{due_date}}/$due_date/" > "$invoice_number.tex"
+    sed "s/{{due_date}}/$due_date/" |
+    sed "s/{{signature_image}}/$signature_image/" |
+    sed "s/{{signature_text}}/$signature_text/" > "$invoice_number.tex"
 
 echo "Generating invoice #$invoice_number to $output_dir"
 pdflatex "$invoice_number.tex" 1>/dev/null
 mv "$invoice_number.pdf" "$output_dir" 2>/dev/null
 
 rm "$invoice_number.aux"
-rm "$invoice_number.tex"
+#rm "$invoice_number.tex"
 rm "$invoice_number.log"
 
