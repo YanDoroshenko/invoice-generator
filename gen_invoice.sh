@@ -14,27 +14,39 @@ else
     exit 1
 fi
 
-quantity=$1
-price=$2
+while getopts ":cd:" opt; do
+    case ${opt} in
+        d )
+            date=$(date -d "$OPTARG" "+%Y-%m-%d")
+            if [ -z "$date" ]; then
+                echo "Usage: gen_invoice.sh [-c] [-d DATE] QUANTITY PRICE"
+                echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
+                exit 1
+            fi
+            ;;
+        c )
+            same_month="true"
+            ;;
+        \? )
+            echo "Usage: gen_invoice.sh [-c] [-d DATE] QUANTITY PRICE"
+            echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
+            exit 1
+            ;;
+    esac
+done
+
+quantity=${@:$OPTIND:1}
+price=${@:$OPTIND+1:1}
 
 if [[ ! $quantity =~ $number_regex ]] || [[ ! $price =~ $number_regex ]]; then
-    echo "Usage: gen_invoice.sh QUANTITY PRICE [DATE]"
+    echo "Usage: gen_invoice.sh [-c] [-d DATE] QUANTITY PRICE"
     echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
     exit 1
-fi
-
-if [ -z $3 ]; then
-    date=$(date "+%Y-%m-%d")
-else
-    date=$(date -d "$3" "+%Y-%m-%d")
 fi
 
 if [ -z $date ]; then
-    echo "Usage: gen_invoice.sh QUANTITY PRICE [DATE]"
-    echo "DATE must be in YYYY/mm/dd format (1776/07/04)"
-    exit 1
+    date=$(date "+%Y-%m-%d")
 fi
-
 
 amount=$(bc <<< "scale=2;$quantity * $price")
 
@@ -70,7 +82,8 @@ if [ -f "signature.png" ]; then
     signature_text="\\\\textbf{Contractor:} $contractor_name"
 fi
 
-invoice_number=$(date -d "$date -1 month" '+%Y%m01')
+[ "$same_month" ] || month_offset="-1 month"
+invoice_number=$(date -d "$date $month_offset" '+%Y%m01')
 
 sed "s/{{invoice_number}}/$invoice_number/" invoice.tex.template |
     sed "s/{{contractor_name}}/$contractor_name/" |
@@ -104,6 +117,6 @@ pdflatex "$invoice_number.tex" 1>/dev/null
 mv "$invoice_number.pdf" "$output_dir" 2>/dev/null
 
 rm "$invoice_number.aux"
-#rm "$invoice_number.tex"
+rm "$invoice_number.tex"
 rm "$invoice_number.log"
 
